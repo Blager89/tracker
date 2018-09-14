@@ -1,0 +1,20 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "lite": "lite-server -port 10001",
+    "start": "npm run lite"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "lite-server": "^2.4.0"
+  },
+  "browser": "vue/dist/vue.common",
+
+  "dependencies": {
+    "vue": "^2.5.17"
+  }
+}
