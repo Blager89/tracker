@@ -27,7 +27,6 @@ const rules = {
 
 //create new user
 router.post('/create', function (req, res, next) {
-
   const validation = new Validator(req.body, rules.create);
 
   validation.fails(function () {
@@ -45,7 +44,7 @@ router.post('/create', function (req, res, next) {
 
     try {
       await knex('users').insert(data);
-      res.sendStatus(200).json();
+      res.sendStatus(200);
     } catch (e) {
       return next(e);
 
@@ -61,7 +60,7 @@ router.put('/update/:id', async function (req, res, next) {
     id: req.params.id,
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password,
+    // password: req.body.password,
     role_id: req.body.role_id
   };
 
@@ -75,7 +74,7 @@ router.put('/update/:id', async function (req, res, next) {
     await knex('users as u')
       .where('u.id', req.params.id)
       .update(data);
-    res.sendStatus(200).json();
+    res.sendStatus(200);
   } catch (e) {
     return next(e);
   }
@@ -97,7 +96,7 @@ router.delete('/delete/:id', async function (req, res, next) {
       await knex('users')
         .where('users.id', req.params.id)
         .del();
-      res.sendStatus(200).json();
+      res.sendStatus(200);
     } catch (e) {
       return next(e);
     }
@@ -111,8 +110,9 @@ router.delete('/delete/:id', async function (req, res, next) {
 router.get('/', async function (req, res, next) {
   try {
     const users = await knex('users')
-      .select();
-    res.send(users).json();
+      .join('roles','roles.id','users.role_id')
+      .select('users.id','users.name','users.email','users.role_id','roles.role_title');
+    res.send(users);
   }catch (e) {
     next(e);
   }
@@ -120,8 +120,16 @@ router.get('/', async function (req, res, next) {
 });
 
 //show curent user
-router.get('/c', async function (req, res, next) {
-  console.log(req._user.role_title);
+router.get('/:id', async function (req, res, next) {
+  try {
+    const current_user = await knex('users as u')
+      .where('u.id', req.params.id)
+      .first();
+
+    res.send(current_user);
+  }catch (e) {
+    return next(e);
+  }
 
 });
 

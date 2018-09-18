@@ -9,10 +9,6 @@ const roles = require('./middlewares/roles');
 
 module.exports = function(app) {
   app.use('/api',authController);
- /* app.use('/api/user',[vToken,roles('admin')],userController);
-  app.use('/api/tracker', [vToken,roles('admin')],trackerController);
-  app.use('/api/project', [vToken,roles('admin')],projectController);
-  app.use('/api/type', [vToken,roles('admin')],workTypeController);*/
 
   app.use('/api/user',[vToken,roles('admin')],userController);
   app.use('/api/tracker', vToken,trackerController);

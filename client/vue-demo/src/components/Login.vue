@@ -92,7 +92,7 @@
             this.$root.$emit('sendName', res.data.name);
           }
         }).catch(err=>{
-          if (err.response.status == 401) {
+          if (err.response.status === 401) {
             this.eMessage = 'Email or password is incorrect';
           }else{
             this.eMessage = 'Email not found'

@@ -52,8 +52,6 @@ router.post('/login', async function (req, res,next) {
 
   const validate = new Validator(req.body,rules);
 
-
-
   try{
     if (validate.fails()) {
       res.status(400).send(validate.errors)
