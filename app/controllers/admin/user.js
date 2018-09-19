@@ -27,6 +27,7 @@ const rules = {
 
 //create new user
 router.post('/create', function (req, res, next) {
+  console.log(req.body);
   const validation = new Validator(req.body, rules.create);
 
   validation.fails(function () {
@@ -111,7 +112,8 @@ router.get('/', async function (req, res, next) {
   try {
     const users = await knex('users')
       .join('roles','roles.id','users.role_id')
-      .select('users.id','users.name','users.email','users.role_id','roles.role_title');
+      .select('users.id','users.name','users.email','users.role_id','roles.role_title')
+      .orderBy('users.id','desc');
     res.send(users);
   }catch (e) {
     next(e);

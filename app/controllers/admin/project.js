@@ -7,14 +7,14 @@ const moment = require('moment');
 
 const rules = {
   create: {
-    project_title: 'required'
+    title: 'required'
   },
   update: {
     id: 'required|numeric',
     project_title: 'required'
   },
   delete: {
-    id:'required|numeric'
+    id: 'required|numeric'
   }
 };
 
@@ -25,16 +25,16 @@ router.get('/', async function (req, res, next) {
     knex('projects as project')
       .count('project.id as cnt')
       .first();
-  if (project_count.cnt){
+  if (project_count.cnt) {
     try {
       const projects = await knex('projects')
-        .orderBy('created_at','desc')
+        .orderBy('created_at', 'desc')
         .select();
       res.send(projects);
-    }catch (e) {
+    } catch (e) {
       return next(e);
     }
-  }else{
+  } else {
     res.send([]);
   }
 
@@ -58,9 +58,11 @@ router.post('/create', async function (req, res, next) {
   }
 
   try {
-    await knex('projects').insert(req.body);
-    res.send(200);
-  }catch (e) {
+    await knex('projects').insert({
+      project_title: req.body.title
+    });
+    res.sendStatus(200);
+  } catch (e) {
     next(e);
   }
 
@@ -71,13 +73,12 @@ router.post('/create', async function (req, res, next) {
 router.put('/update/:id', async function (req, res, next) {
   const data = {
     id: req.params.id,
-    project_title: req.body.project_title,
+    project_title: req.body.title,
     // date: moment().format('YYYY-MM-DD HH:mm:ss')
 
 
-
-};
-
+  };
+  console.log(data);
   const validation = new Validator(data, rules.update);
   if (validation.fails()) {
     return next(validation.errors);
@@ -88,16 +89,16 @@ router.put('/update/:id', async function (req, res, next) {
     .count('projects.id as ctn')
     .first();
 
-  if (count.ctn){
+  if (count.ctn) {
     try {
       await knex('projects')
-        .where('projects.id',req.params.id)
-        .update(req.body);
+        .where('projects.id', req.params.id)
+        .update(data);
       res.sendStatus(200);
-    }catch (e) {
+    } catch (e) {
       return next(e);
     }
-  }else{
+  } else {
     return next();
   }
 
@@ -122,11 +123,11 @@ router.delete('/delete/:id', async function (req, res, next) {
         .where('projects.id', req.params.id)
         .del();
       res.sendStatus(200);
-    }catch (e) {
+    } catch (e) {
       return next(e);
 
     }
-  }else{
+  } else {
     return next();
   }
 

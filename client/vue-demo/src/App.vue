@@ -12,14 +12,12 @@
 </template>
 
 <script>
-  import Sidebar from './components/admin/Sidebar'
   import Navbar from './components/Navbar'
 
 
   export default {
     name: 'App',
     components: {
-      Sidebar,
       Navbar,
     },
 

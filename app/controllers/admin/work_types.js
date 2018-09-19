@@ -6,7 +6,7 @@ const Validator = require('validatorjs');
 
 const rules = {
   create: {
-    work_title: 'required'
+    title: 'required'
   },
   update: {
     id: 'required|numeric',
@@ -53,7 +53,7 @@ router.post('/create', async function (req, res, next) {
   }
 
   try {
-    await knex('work_types').insert(req.body);
+    await knex('work_types').insert({work_title:req.body.title});
     res.send(200);
   }catch (e) {
     next(e);
@@ -63,9 +63,10 @@ router.post('/create', async function (req, res, next) {
 });
 //update
 router.put('/update/:id', async function (req, res, next) {
+
   const data = {
     id: req.params.id,
-    work_title: req.body.work_title
+    work_title: req.body.title
   };
 
   const validation = new Validator(data, rules.update);
@@ -82,7 +83,7 @@ router.put('/update/:id', async function (req, res, next) {
     try {
       await knex('work_types')
         .where('work_types.id',req.params.id)
-        .update(req.body);
+        .update(data);
       res.sendStatus(200);
     }catch (e) {
       return next(e);
