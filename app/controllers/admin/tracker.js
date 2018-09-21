@@ -36,54 +36,86 @@ router.get('/:id', async function (req, res, next) {
 
 });
 //show
+
 router.get('/', async function (req, res, next) {
+
   const role = req._user.role_title;
-  if (role == 'admin') {
-    const track_count = await
-      knex('trackers as track')
-        .count('track.id as cnt')
-        .first();
 
-    if (track_count.cnt) {
-      const show_track = await knex('trackers as track')
-        .join('users', 'users.id', 'track.user_id')
-        .join('projects', 'projects.id', 'track.project_id')
-        .join('work_types', 'work_types.id', 'track.work_type_id')
-        .orderBy('track.date', 'desc')
-        .select('track.id', 'track.hours', 'track.date',
-          'users.name', 'projects.project_title',
-          'track.task', 'work_types.work_title',
-          'track.id', 'track.id', 'track.id', 'track.id');
-      res.send(show_track)
+
+  const show_track = await knex('trackers as track')
+    .where(function () {
+      // if(req._user.role_id !== 1){
+      if (role !== 'admin') {
+        this.where('track.user_id', req._user.id);
+      }
+
+    })
+    // .join('users', 'users.id', 'track.user_id')
+    .join('projects', 'projects.id', 'track.project_id')
+    .join('work_types', 'work_types.id', 'track.work_type_id')
+    .orderBy('track.id', 'desc')
+    .select('track.id', 'track.hours', 'track.date',
+      'users.name', 'projects.project_title',
+      'track.task', 'work_types.work_title',
+      'track.id', 'track.id', 'track.id', 'track.id');
+
+
+
+  res.send(show_track)
+
+
+  /*
+
+
+    if (role === 'admin') {
+      const track_count = await
+        knex('trackers as track')
+          .count('track.id as cnt')
+          .first();
+
+
+
+
+      if (track_count.cnt) {
+        const show_track = await knex('trackers as track')
+          .join('users', 'users.id', 'track.user_id')
+          .join('projects', 'projects.id', 'track.project_id')
+          .join('work_types', 'work_types.id', 'track.work_type_id')
+          .orderBy('track.date', 'desc')
+          .select('track.id', 'track.hours', 'track.date',
+            'users.name', 'projects.project_title',
+            'track.task', 'work_types.work_title',
+            'track.id', 'track.id', 'track.id', 'track.id');
+        res.send(show_track)
+      } else {
+        res.send([]);
+      }
+
+
     } else {
-      res.send([]);
+      const track_count = await
+        knex('trackers as track')
+          .where('track.user_id', req._user.id)
+          .count('track.id as cnt')
+          .first();
+
+      if (track_count.cnt) {
+        const show_track = await knex('trackers as track')
+          .where('track.user_id', req._user.id)
+          .join('users', 'users.id', 'track.user_id')
+          .join('projects', 'projects.id', 'track.project_id')
+          .join('work_types', 'work_types.id', 'track.work_type_id')
+          .orderBy('track.id', 'desc')
+          .select('track.id', 'track.hours', 'track.date',
+            'users.name', 'projects.project_title',
+            'track.task', 'work_types.work_title',
+            'track.id', 'track.id', 'track.id', 'track.id');
+        res.send(show_track)
+      } else {
+        res.send([]);
+      }
     }
-
-
-
-  } else {
-    const track_count = await
-      knex('trackers as track')
-        .where('track.user_id', req._user.id)
-        .count('track.id as cnt')
-        .first();
-
-    if (track_count.cnt) {
-      const show_track = await knex('trackers as track')
-        .where('track.user_id', req._user.id)
-        .join('users', 'users.id', 'track.user_id')
-        .join('projects', 'projects.id', 'track.project_id')
-        .join('work_types', 'work_types.id', 'track.work_type_id')
-        .orderBy('track.id', 'desc')
-        .select('track.id', 'track.hours', 'track.date',
-          'users.name', 'projects.project_title',
-          'track.task', 'work_types.work_title',
-          'track.id', 'track.id', 'track.id', 'track.id');
-      res.send(show_track)
-    } else {
-      res.send([]);
-    }
-  }
+  */
 
 
 });
